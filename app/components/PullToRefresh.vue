@@ -282,6 +282,7 @@ defineExpose({ done })
   touch-action: pan-y;
   position: relative;
   overflow: hidden;
+  min-height: 100dvh;
 }
 
 .ptr-indicator {
