@@ -78,11 +78,8 @@ watch(
 <template>
   <NuxtPwaManifest />
   <UApp>
-    <UHeader>
-    </UHeader>
-
-    <UMain>
+    <NuxtLayout>
       <NuxtPage />
-    </UMain>
+    </NuxtLayout>
   </UApp>
 </template>
