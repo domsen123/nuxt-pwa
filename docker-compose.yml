@@ -1,0 +1,16 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nuxt-pwa
+    restart: unless-stopped
+    volumes:
+      - ./storage:/app/storage
+    environment:
+      NUXT_SITE_NAME: ${NUXT_SITE_NAME}
+      NUXT_SITE_ENV: ${NUXT_SITE_ENV}
+      NUXT_PUBLIC_SITE_URL: ${NUXT_PUBLIC_SITE_URL}
+   
+volumes:
+  postgres_data:
