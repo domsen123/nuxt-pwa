@@ -3,6 +3,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/ui',
     '@vite-pwa/nuxt',
+    'nuxt-mcp-dev',
   ],
 
   devtools: {
@@ -23,7 +24,7 @@ export default defineNuxtConfig({
       display: 'standalone',
       orientation: 'portrait',
       background_color: '#ffffff',
-      theme_color: '#000000',
+      theme_color: '#ffffff',
       icons: [
         {
           src: 'icons/icon-48x48.png',

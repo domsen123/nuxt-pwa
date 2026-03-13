@@ -1,13 +1,32 @@
 <script setup>
 const colorMode = useColorMode()
 
-const color = computed(() => colorMode.value === 'dark' ? '#10172b' : 'white')
+const themeColor = computed(() =>
+  colorMode.value === 'dark' ? '#10172b' : 'white'
+)
 
 useHead({
   meta: [
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-    { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-visual' },
-    { key: 'theme-color', name: 'theme-color', content: color },
+    {
+      name: 'viewport',
+      content: 'width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-visual',
+    },
+    {
+      key: 'theme-color-light',
+      name: 'theme-color',
+      media: '(prefers-color-scheme: light)',
+      content: computed(() =>
+        colorMode.preference === 'system' ? 'white' : themeColor.value
+      ),
+    },
+    {
+      key: 'theme-color-dark',
+      name: 'theme-color',
+      media: '(prefers-color-scheme: dark)',
+      content: computed(() =>
+        colorMode.preference === 'system' ? '#10172b' : themeColor.value
+      ),
+    },
     { name: 'apple-mobile-web-app-capable', content: 'yes' },
   ],
   link: [
