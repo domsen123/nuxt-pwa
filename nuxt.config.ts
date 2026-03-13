@@ -12,6 +12,10 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  experimental: {
+    viewTransition: true,
+  },
+
   compatibilityDate: '2025-01-15',
   pwa: {
     registerType: 'prompt',

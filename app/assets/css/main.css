@@ -20,3 +20,49 @@
 html, body {
   overscroll-behavior: none;
 }
+
+/* Page slide transitions (View Transitions API) */
+@keyframes slide-in-from-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slide-out-to-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-33%); }
+}
+
+@keyframes slide-in-from-left {
+  from { transform: translateX(-33%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slide-out-to-right {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+/* Forward navigation: old page slides left, new page slides in from right */
+html:active-view-transition-type(slide-forward) ::view-transition-old(root) {
+  animation: slide-out-to-left 300ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+html:active-view-transition-type(slide-forward) ::view-transition-new(root) {
+  animation: slide-in-from-right 300ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+/* Back navigation: old page slides right, new page slides in from left */
+html:active-view-transition-type(slide-back) ::view-transition-old(root) {
+  animation: slide-out-to-right 300ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+html:active-view-transition-type(slide-back) ::view-transition-new(root) {
+  animation: slide-in-from-left 300ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}
