@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import FormItem from '~/components/Pwa/FormItem.vue'
-
 async function handleRefresh(done: () => void) {
   await new Promise(resolve => setTimeout(resolve, 2000))
   done()
@@ -21,11 +19,8 @@ async function handleRefresh(done: () => void) {
         ]"
       />
       <PwaCard title="Forms">
-        <FormItem v-bind="{ icon: 'i-lucide-user', label: 'Name', value: 'John Doe', to: '/profile' }">
-          <div class="p-4">
-            <p>Hier könnte ein Formular oder weitere Informationen stehen.</p>
-          </div>
-        </FormItem>
+        <PwaFormItem name="profile-name" icon="i-lucide-user" label="Name" value="John Doe">
+        </PwaFormItem>
       </PwaCard>
     </div>
   </PullToRefresh>

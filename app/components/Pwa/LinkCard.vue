@@ -27,4 +27,3 @@ withDefaults(defineProps<{
   </PwaCard>
 </template>
 
-<style></style>

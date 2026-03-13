@@ -2,6 +2,7 @@
 export default defineNuxtConfig({
   modules: [
     '@nuxt/ui',
+    '@vueuse/nuxt',
     '@vite-pwa/nuxt',
     'nuxt-mcp-dev',
   ],
