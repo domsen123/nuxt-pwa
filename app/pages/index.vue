@@ -12,8 +12,8 @@ async function handleRefresh(done: () => void) {
       <PwaLinkCard
         title="Wie du Intagram nutzt"
         :items="[
-          { icon: 'i-lucide-bookmark', label: 'Gespeichert' },
-          { icon: 'i-lucide-clock-check', label: 'Archiv' },
+          { icon: 'i-lucide-bookmark', label: 'Gespeichert', trailingText: 'Öffentlich' },
+          { icon: 'i-lucide-clock-check', label: 'Archiv', trailingText: '2' },
           { icon: 'i-lucide-clock-fading', label: 'Deine Aktivitäten' },
           { icon: 'i-lucide-bell', label: 'Benachrichtigungen' },
           { icon: 'i-lucide-bell', label: 'Benachrichtigungen' },

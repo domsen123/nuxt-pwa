@@ -3,7 +3,7 @@ import type { ButtonProps } from '@nuxt/ui'
 
 withDefaults(defineProps<{
   title: string
-  items?: ButtonProps[]
+  items?: (ButtonProps & { trailingText?: string })[]
 }>(), {
   items: () => [],
 })
@@ -12,21 +12,18 @@ withDefaults(defineProps<{
 <template>
   <UCard variant="soft" :ui="{ body: 'p-0 sm:p-0', root: 'rounded-none' }">
     <div class="p-4 text-muted font-medium text-sm" v-text="title"></div>
-    <UButton
+    <NuxtLink
       v-for="(item, idx) in items"
       :key="idx"
-      block
-      trailing-icon="i-lucide-chevron-right"
-      variant="ghost"
-      color="neutral"
-      v-bind="item"
-      :ui="{
-        base: 'p-3 text-base gap-2',
-        leadingIcon: 'size-6',
-        leadingAvatarSize: 'xs',
-        trailingIcon: 'size-6 text-muted',
-      }"
-    />
+      class="w-full p-3 text-base gap-2 rounded-none font-medium flex items-center disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75 transition-colors active:bg-elevated"
+    >
+      <UIcon :name="item.icon" class="shrink-0 size-6"></UIcon>
+      <div class="flex-1 truncate" v-text="item.label" />
+      <div class="shrink-0 flex items-center text-muted gap-1">
+        <div class="text-sm" v-text="item.trailingText"></div>
+        <UIcon name="i-lucide-chevron-right" class="size-6"></UIcon>
+      </div>
+    </NuxtLink>
   </UCard>
 </template>
 
