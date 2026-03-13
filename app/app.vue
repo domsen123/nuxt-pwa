@@ -58,8 +58,13 @@ watch(
         description: 'A new version of the app is available. Please refresh to update.',
         color: 'info',
         duration: 0,
+        close: false,
+        orientation: 'horizontal',
         actions: [{
           label: 'Refresh',
+          size: 'lg',
+          variant: 'subtle',
+
           onClick: () => {
             $pwa?.updateServiceWorker(true)
           },
