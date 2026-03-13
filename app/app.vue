@@ -57,12 +57,13 @@ watch(
         title: 'Update Available',
         description: 'A new version of the app is available. Please refresh to update.',
         color: 'info',
-        action: {
+        duration: 0,
+        actions: [{
           label: 'Refresh',
           onClick: () => {
             $pwa?.updateServiceWorker(true)
           },
-        },
+        }],
       })
     }
   },
