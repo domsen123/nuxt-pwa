@@ -1,11 +1,11 @@
 export default defineNuxtPlugin(() => {
   const router = useRouter()
 
-  let isPopstate = false
-  let lastPosition = history.state?.position ?? 0
+  // Track the current page's history position (updated after each navigation completes)
+  let currentPosition = history.state?.position ?? 0
 
-  window.addEventListener('popstate', () => {
-    isPopstate = true
+  router.afterEach(() => {
+    currentPosition = history.state?.position ?? currentPosition
   })
 
   router.beforeEach((to, from) => {
@@ -15,24 +15,20 @@ export default defineNuxtPlugin(() => {
     // Disable transitions for tab-to-tab navigation
     if (fromIsTab && toIsTab) {
       to.meta.viewTransition = false
-      isPopstate = false
       return
     }
 
-    const currentPosition = history.state?.position ?? 0
+    // For push/replace: browser hasn't updated history.state yet, so position === currentPosition
+    // For pop (back/forward): browser has already updated history.state to the destination
+    const statePosition = history.state?.position ?? 0
 
-    if (isPopstate) {
-      const direction = currentPosition < lastPosition ? 'slide-back' : 'slide-forward'
-      to.meta.viewTransition = { types: [direction] }
-      isPopstate = false
-    } else {
+    if (statePosition === currentPosition) {
+      // Programmatic navigation (push/replace) — always forward
       to.meta.viewTransition = { types: ['slide-forward'] }
+    } else {
+      // Pop navigation (back/forward button)
+      const direction = statePosition < currentPosition ? 'slide-back' : 'slide-forward'
+      to.meta.viewTransition = { types: [direction] }
     }
-
-    lastPosition = currentPosition
-  })
-
-  router.afterEach(() => {
-    lastPosition = history.state?.position ?? lastPosition
   })
 })
