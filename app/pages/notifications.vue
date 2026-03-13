@@ -4,7 +4,11 @@
 
 <template>
   <div>
-    <h1>Benachrichtigungen</h1>
+    <UHeader>
+      <template #left>
+        <UButton icon="i-lucide-arrow-left" variant="ghost" @click="$router.back()" />
+      </template>
+    </UHeader>
   </div>
 </template>
 
