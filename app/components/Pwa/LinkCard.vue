@@ -16,6 +16,7 @@ withDefaults(defineProps<{
       v-for="(item, idx) in items"
       :key="idx"
       class="select-none w-full p-3 text-base gap-2 rounded-none font-medium flex items-center disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75 transition-colors active:bg-elevated"
+      :to="item.to"
     >
       <UIcon :name="item.icon" class="shrink-0 size-6"></UIcon>
       <div class="flex-1 truncate" v-text="item.label" />

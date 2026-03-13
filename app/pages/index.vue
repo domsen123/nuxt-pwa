@@ -15,8 +15,7 @@ async function handleRefresh(done: () => void) {
           { icon: 'i-lucide-bookmark', label: 'Gespeichert', trailingText: 'Öffentlich' },
           { icon: 'i-lucide-clock-check', label: 'Archiv', trailingText: '2' },
           { icon: 'i-lucide-clock-fading', label: 'Deine Aktivitäten' },
-          { icon: 'i-lucide-bell', label: 'Benachrichtigungen' },
-          { icon: 'i-lucide-bell', label: 'Benachrichtigungen' },
+          { icon: 'i-lucide-bell', label: 'Benachrichtigungen', to: '/notifications' },
           { icon: 'i-lucide-clock', label: 'Zeitmanagement' },
         ]"
       />
