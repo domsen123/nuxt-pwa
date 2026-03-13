@@ -20,7 +20,7 @@ const pullDistance = ref(0)
 const startY = ref(0)
 const isTracking = ref(false)
 const containerRef = ref<HTMLElement>()
-const maxPull = 120
+const maxPull = 80
 
 let timeoutId: ReturnType<typeof setTimeout> | null = null
 let thresholdCrossed = false
