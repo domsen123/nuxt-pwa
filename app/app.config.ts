@@ -4,5 +4,15 @@ export default defineAppConfig({
       primary: 'fuchsia',
       neutral: 'slate',
     },
+    card: {
+      slots: {
+        root: 'rounded-none',
+      },
+    },
+    button: {
+      slots: {
+        base: 'rounded-none',
+      },
+    },
   },
 })
