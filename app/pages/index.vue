@@ -32,7 +32,7 @@ async function handleRefresh(done: () => void) {
         variant="subtle"
         :links="[{
           label: 'Tabs',
-          to: '/tabs',
+          to: '/tabs/home',
           color: 'neutral',
         }]"
       />

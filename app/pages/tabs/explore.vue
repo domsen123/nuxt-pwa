@@ -3,7 +3,9 @@
 </script>
 
 <template>
-  <div>explore</div>
+  <UContainer class="pt-20">
+    <UInput placeholder="open virtual keyboard" class="w-full" />
+  </UContainer>
 </template>
 
 <style></style>
