@@ -49,21 +49,24 @@ useSeoMeta({
   ogDescription: description,
 })
 
-onMounted(() => {
-  if ($pwa.needRefresh) {
-    toast.add({
-      title: 'Update Available',
-      description: 'A new version of the app is available. Please refresh to update.',
-      color: 'info',
-      action: {
-        label: 'Refresh',
-        onClick: () => {
-          $pwa.refresh()
+watch(
+  () => $pwa?.needRefresh,
+  (needRefresh) => {
+    if (needRefresh) {
+      toast.add({
+        title: 'Update Available',
+        description: 'A new version of the app is available. Please refresh to update.',
+        color: 'info',
+        action: {
+          label: 'Refresh',
+          onClick: () => {
+            $pwa?.updateServiceWorker(true)
+          },
         },
-      },
-    })
-  }
-})
+      })
+    }
+  },
+)
 </script>
 
 <template>
