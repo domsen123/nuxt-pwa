@@ -11,7 +11,7 @@ withDefaults(defineProps<{
 
 <template>
   <UCard variant="soft" :ui="{ body: 'p-0 sm:p-0', root: 'rounded-none' }">
-    <div class="p-4 text-muted font-medium text-sm" v-text="title"></div>
+    <div class="px-4 py-3.5 text-muted font-medium text-sm" v-text="title"></div>
     <NuxtLink
       v-for="(item, idx) in items"
       :key="idx"
@@ -20,7 +20,7 @@ withDefaults(defineProps<{
       <UIcon :name="item.icon" class="shrink-0 size-6"></UIcon>
       <div class="flex-1 truncate" v-text="item.label" />
       <div class="shrink-0 flex items-center text-muted gap-1">
-        <div class="text-sm" v-text="item.trailingText"></div>
+        <div class="text-xs font-normal" v-text="item.trailingText"></div>
         <UIcon name="i-lucide-chevron-right" class="size-6"></UIcon>
       </div>
     </NuxtLink>
