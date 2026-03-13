@@ -81,6 +81,9 @@ function onTabClick(item: PwaTabItem) {
 </script>
 
 <template>
+  <div v-if="$slots.default" class="pwa-tabs-content">
+    <slot />
+  </div>
   <nav
     v-if="items.length"
     class="pwa-tabs bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800"
@@ -122,6 +125,10 @@ function onTabClick(item: PwaTabItem) {
 </template>
 
 <style scoped>
+.pwa-tabs-content {
+  padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+}
+
 .pwa-tabs {
   position: fixed;
   bottom: 0;
