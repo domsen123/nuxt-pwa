@@ -20,7 +20,7 @@ const pullDistance = ref(0)
 const startY = ref(0)
 const isTracking = ref(false)
 const containerRef = ref<HTMLElement>()
-const maxPull = 160
+const maxPull = 120
 
 let timeoutId: ReturnType<typeof setTimeout> | null = null
 let thresholdCrossed = false
@@ -63,14 +63,16 @@ function canPull(): boolean {
 }
 
 function onStart(clientY: number) {
-  if (!canPull() || state.value === 'refreshing') return
+  if (!canPull() || state.value === 'refreshing')
+    return
   startY.value = clientY
   isTracking.value = true
   thresholdCrossed = false
 }
 
 function onMove(clientY: number, event?: Event) {
-  if (!isTracking.value || state.value === 'refreshing') return
+  if (!isTracking.value || state.value === 'refreshing')
+    return
 
   const rawDelta = clientY - startY.value
   if (rawDelta <= 0) {
@@ -95,14 +97,16 @@ function onMove(clientY: number, event?: Event) {
       navigator.vibrate?.(10)
     }
     state.value = 'threshold'
-  } else {
+  }
+  else {
     state.value = 'pulling'
     thresholdCrossed = false
   }
 }
 
 function onEnd() {
-  if (!isTracking.value) return
+  if (!isTracking.value)
+    return
   isTracking.value = false
 
   if (state.value === 'threshold') {
@@ -110,7 +114,8 @@ function onEnd() {
     pullDistance.value = 0
     emit('refresh')
     timeoutId = setTimeout(done, props.maxTimeout)
-  } else {
+  }
+  else {
     reset()
   }
 }
@@ -134,12 +139,14 @@ function done() {
 
 function onTouchStart(e: TouchEvent) {
   const touch = e.touches[0]
-  if (touch) onStart(touch.clientY)
+  if (touch)
+    onStart(touch.clientY)
 }
 
 function onTouchMove(e: TouchEvent) {
   const touch = e.touches[0]
-  if (touch) onMove(touch.clientY, e)
+  if (touch)
+    onMove(touch.clientY, e)
 }
 
 function onTouchEnd() {
@@ -151,7 +158,8 @@ function onMouseDown(e: MouseEvent) {
 }
 
 function onMouseMove(e: MouseEvent) {
-  if (!isTracking.value) return
+  if (!isTracking.value)
+    return
   onMove(e.clientY, e)
 }
 
@@ -161,7 +169,8 @@ function onMouseUp() {
 
 onMounted(() => {
   const el = containerRef.value
-  if (!el) return
+  if (!el)
+    return
   el.addEventListener('touchmove', onTouchMove as EventListener, { passive: false })
   window.addEventListener('mousemove', onMouseMove)
   window.addEventListener('mouseup', onMouseUp)
@@ -174,7 +183,8 @@ onBeforeUnmount(() => {
   }
   window.removeEventListener('mousemove', onMouseMove)
   window.removeEventListener('mouseup', onMouseUp)
-  if (timeoutId) clearTimeout(timeoutId)
+  if (timeoutId)
+    clearTimeout(timeoutId)
 })
 
 defineExpose({ done })
