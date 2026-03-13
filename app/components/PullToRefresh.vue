@@ -10,49 +10,61 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-  refresh: []
+  refresh: [done: () => void]
 }>()
 
 type State = 'idle' | 'pulling' | 'threshold' | 'refreshing' | 'done'
 
 const state = ref<State>('idle')
 const pullDistance = ref(0)
-const startY = ref(0)
-const isTracking = ref(false)
+let startY = 0
+let isTracking = false
 const containerRef = ref<HTMLElement>()
 const maxPull = 80
 
 let timeoutId: ReturnType<typeof setTimeout> | null = null
+let doneTransitionId: ReturnType<typeof setTimeout> | null = null
 let thresholdCrossed = false
 
 const progress = computed(() => Math.min(pullDistance.value / props.threshold, 1))
 
-const indicatorStyle = computed(() => ({
-  height: state.value === 'refreshing' ? `${props.threshold}px` : `${Math.max(pullDistance.value, 0)}px`,
-  transition: state.value === 'idle' || state.value === 'done'
-    ? 'height 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2)'
-    : state.value === 'refreshing'
-      ? 'height 0.3s ease-out'
-      : 'none',
-}))
+const circumference = 2 * Math.PI * 14
 
-const contentStyle = computed(() => ({
-  transform: state.value === 'refreshing'
-    ? `translateY(${props.threshold}px)`
-    : `translateY(${pullDistance.value}px)`,
-  transition: state.value === 'idle' || state.value === 'done'
-    ? 'transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2)'
-    : state.value === 'refreshing'
-      ? 'transform 0.3s ease-out'
-      : 'none',
-}))
+const dashOffset = computed(() => circumference * (1 - progress.value))
 
-const dashOffset = computed(() => {
-  const circumference = 2 * Math.PI * 14
-  return circumference * (1 - progress.value)
+const styles = computed(() => {
+  const s = state.value
+  const timing = s === 'idle' || s === 'done'
+    ? '0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2)'
+    : s === 'refreshing'
+      ? '0.3s ease-out'
+      : 'none'
+
+  const targetHeight = s === 'refreshing' ? props.threshold : Math.max(pullDistance.value, 0)
+  const targetTranslate = s === 'refreshing' ? props.threshold : pullDistance.value
+
+  return {
+    indicator: {
+      height: `${targetHeight}px`,
+      transition: timing === 'none' ? 'none' : `height ${timing}`,
+    },
+    content: {
+      transform: `translateY(${targetTranslate}px)`,
+      transition: timing === 'none' ? 'none' : `transform ${timing}`,
+      willChange: s !== 'idle' ? 'transform' as const : undefined,
+    },
+  }
 })
 
-const circumference = 2 * Math.PI * 14
+const stateAnnouncement = computed(() => {
+  switch (state.value) {
+    case 'pulling': return 'Pull down to refresh'
+    case 'threshold': return 'Release to refresh'
+    case 'refreshing': return 'Refreshing'
+    case 'done': return 'Refresh complete'
+    default: return ''
+  }
+})
 
 function dampen(raw: number): number {
   return raw * 0.5 * (1 - Math.min(raw / (maxPull * 3), 0.6))
@@ -65,16 +77,16 @@ function canPull(): boolean {
 function onStart(clientY: number) {
   if (!canPull() || state.value === 'refreshing')
     return
-  startY.value = clientY
-  isTracking.value = true
+  startY = clientY
+  isTracking = true
   thresholdCrossed = false
 }
 
 function onMove(clientY: number, event?: Event) {
-  if (!isTracking.value || state.value === 'refreshing')
+  if (!isTracking || state.value === 'refreshing')
     return
 
-  const rawDelta = clientY - startY.value
+  const rawDelta = clientY - startY
   if (rawDelta <= 0) {
     pullDistance.value = 0
     state.value = 'idle'
@@ -82,7 +94,7 @@ function onMove(clientY: number, event?: Event) {
   }
 
   if (!canPull()) {
-    isTracking.value = false
+    isTracking = false
     return
   }
 
@@ -104,15 +116,21 @@ function onMove(clientY: number, event?: Event) {
   }
 }
 
+function removeMouseListeners() {
+  window.removeEventListener('mousemove', onMouseMove)
+  window.removeEventListener('mouseup', onMouseUp)
+}
+
 function onEnd() {
-  if (!isTracking.value)
+  if (!isTracking)
     return
-  isTracking.value = false
+  isTracking = false
+  removeMouseListeners()
 
   if (state.value === 'threshold') {
     state.value = 'refreshing'
     pullDistance.value = 0
-    emit('refresh')
+    emit('refresh', done)
     timeoutId = setTimeout(done, props.maxTimeout)
   }
   else {
@@ -132,21 +150,26 @@ function done() {
   }
   state.value = 'done'
   pullDistance.value = 0
-  setTimeout(() => {
+  doneTransitionId = setTimeout(() => {
     state.value = 'idle'
   }, 300)
 }
 
 function onTouchStart(e: TouchEvent) {
-  const touch = e.touches[0]
-  if (touch)
-    onStart(touch.clientY)
+  if (e.touches.length !== 1)
+    return
+  onStart(e.touches[0]!.clientY)
 }
 
 function onTouchMove(e: TouchEvent) {
-  const touch = e.touches[0]
-  if (touch)
-    onMove(touch.clientY, e)
+  if (e.touches.length !== 1) {
+    if (isTracking) {
+      isTracking = false
+      reset()
+    }
+    return
+  }
+  onMove(e.touches[0]!.clientY, e)
 }
 
 function onTouchEnd() {
@@ -155,10 +178,14 @@ function onTouchEnd() {
 
 function onMouseDown(e: MouseEvent) {
   onStart(e.clientY)
+  if (isTracking) {
+    window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('mouseup', onMouseUp)
+  }
 }
 
 function onMouseMove(e: MouseEvent) {
-  if (!isTracking.value)
+  if (!isTracking)
     return
   onMove(e.clientY, e)
 }
@@ -171,20 +198,19 @@ onMounted(() => {
   const el = containerRef.value
   if (!el)
     return
-  el.addEventListener('touchmove', onTouchMove as EventListener, { passive: false })
-  window.addEventListener('mousemove', onMouseMove)
-  window.addEventListener('mouseup', onMouseUp)
+  el.addEventListener('touchmove', onTouchMove, { passive: false })
 })
 
 onBeforeUnmount(() => {
   const el = containerRef.value
   if (el) {
-    el.removeEventListener('touchmove', onTouchMove as EventListener)
+    el.removeEventListener('touchmove', onTouchMove)
   }
-  window.removeEventListener('mousemove', onMouseMove)
-  window.removeEventListener('mouseup', onMouseUp)
+  removeMouseListeners()
   if (timeoutId)
     clearTimeout(timeoutId)
+  if (doneTransitionId)
+    clearTimeout(doneTransitionId)
 })
 
 defineExpose({ done })
@@ -198,7 +224,7 @@ defineExpose({ done })
     @touchend="onTouchEnd"
     @mousedown="onMouseDown"
   >
-    <div class="ptr-indicator" :style="indicatorStyle">
+    <div class="ptr-indicator" :style="styles.indicator" role="status" aria-live="polite">
       <div class="ptr-spinner-wrap">
         <svg
           class="ptr-svg"
@@ -208,6 +234,7 @@ defineExpose({ done })
             'ptr-pulse': state === 'threshold',
           }"
           viewBox="0 0 36 36"
+          aria-hidden="true"
         >
           <!-- Background track -->
           <circle
@@ -241,9 +268,10 @@ defineExpose({ done })
           />
         </svg>
       </div>
+      <span class="sr-only">{{ stateAnnouncement }}</span>
     </div>
 
-    <div class="ptr-content" :style="contentStyle">
+    <div class="ptr-content" :style="styles.content">
       <slot />
     </div>
   </div>
@@ -313,10 +341,6 @@ defineExpose({ done })
 
 .ptr-shrink {
   animation: ptr-shrink 0.3s ease-out forwards;
-}
-
-.ptr-content {
-  will-change: transform;
 }
 
 @keyframes ptr-rotate {
