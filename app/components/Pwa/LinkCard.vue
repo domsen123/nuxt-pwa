@@ -11,8 +11,22 @@ withDefaults(defineProps<{
 
 <template>
   <UCard variant="soft" :ui="{ body: 'p-0 sm:p-0', root: 'rounded-none' }">
-    <div class="px-4 py-2 text-muted font-medium text-sm" v-text="title"></div>
-    <UButton v-for="(item, idx) in items" :key="idx" block trailing-icon="i-lucide-chevron-right" variant="ghost" color="neutral" size="xl" v-bind="item" />
+    <div class="p-4 text-muted font-medium text-sm" v-text="title"></div>
+    <UButton
+      v-for="(item, idx) in items"
+      :key="idx"
+      block
+      trailing-icon="i-lucide-chevron-right"
+      variant="ghost"
+      color="neutral"
+      v-bind="item"
+      :ui="{
+        base: 'p-3 text-base gap-2',
+        leadingIcon: 'size-6',
+        leadingAvatarSize: 'xs',
+        trailingIcon: 'size-6 text-muted',
+      }"
+    />
   </UCard>
 </template>
 
