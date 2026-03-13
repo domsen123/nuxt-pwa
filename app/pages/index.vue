@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import FormItem from '~/components/Pwa/FormItem.vue'
+
 async function handleRefresh(done: () => void) {
   await new Promise(resolve => setTimeout(resolve, 2000))
   done()
@@ -8,9 +10,8 @@ async function handleRefresh(done: () => void) {
 <template>
   <PullToRefresh @refresh="handleRefresh">
     <div class="space-y-4">
-      <UContainer></UContainer>
       <PwaLinkCard
-        title="Wie du Intagram nutzt"
+        title="Links und Einstellungen"
         :items="[
           { icon: 'i-lucide-bookmark', label: 'Gespeichert', trailingText: 'Öffentlich' },
           { icon: 'i-lucide-clock-check', label: 'Archiv', trailingText: '2' },
@@ -19,6 +20,13 @@ async function handleRefresh(done: () => void) {
           { icon: 'i-lucide-clock', label: 'Zeitmanagement' },
         ]"
       />
+      <PwaCard title="Forms">
+        <FormItem v-bind="{ icon: 'i-lucide-user', label: 'Name', value: 'John Doe', to: '/profile' }">
+          <div class="p-4">
+            <p>Hier könnte ein Formular oder weitere Informationen stehen.</p>
+          </div>
+        </FormItem>
+      </PwaCard>
     </div>
   </PullToRefresh>
 </template>

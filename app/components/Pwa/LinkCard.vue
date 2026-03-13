@@ -10,8 +10,7 @@ withDefaults(defineProps<{
 </script>
 
 <template>
-  <UCard variant="soft" :ui="{ body: 'p-0 sm:p-0', root: 'rounded-none' }">
-    <div class="px-4 py-3.5 text-muted font-medium text-sm" v-text="title"></div>
+  <PwaCard :title="title">
     <NuxtLink
       v-for="(item, idx) in items"
       :key="idx"
@@ -25,7 +24,7 @@ withDefaults(defineProps<{
         <UIcon name="i-lucide-chevron-right" class="size-6"></UIcon>
       </div>
     </NuxtLink>
-  </UCard>
+  </PwaCard>
 </template>
 
 <style></style>
