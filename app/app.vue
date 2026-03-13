@@ -1,8 +1,10 @@
 <script setup>
+const { $pwa } = useNuxtApp()
+const toast = useToast()
 const colorMode = useColorMode()
 
 const themeColor = computed(() =>
-  colorMode.value === 'dark' ? '#10172b' : 'white'
+  colorMode.value === 'dark' ? '#10172b' : 'white',
 )
 
 useHead({
@@ -16,7 +18,7 @@ useHead({
       name: 'theme-color',
       media: '(prefers-color-scheme: light)',
       content: computed(() =>
-        colorMode.preference === 'system' ? 'white' : themeColor.value
+        colorMode.preference === 'system' ? 'white' : themeColor.value,
       ),
     },
     {
@@ -24,7 +26,7 @@ useHead({
       name: 'theme-color',
       media: '(prefers-color-scheme: dark)',
       content: computed(() =>
-        colorMode.preference === 'system' ? '#10172b' : themeColor.value
+        colorMode.preference === 'system' ? '#10172b' : themeColor.value,
       ),
     },
     { name: 'apple-mobile-web-app-capable', content: 'yes' },
@@ -45,6 +47,22 @@ useSeoMeta({
   description,
   ogTitle: title,
   ogDescription: description,
+})
+
+onMounted(() => {
+  if ($pwa.needRefresh) {
+    toast.add({
+      title: 'Update Available',
+      description: 'A new version of the app is available. Please refresh to update.',
+      color: 'info',
+      action: {
+        label: 'Refresh',
+        onClick: () => {
+          $pwa.refresh()
+        },
+      },
+    })
+  }
 })
 </script>
 
